@@ -35,10 +35,10 @@ jobs:
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
 
-      - name: Sonarqube Begin
-        run: | 
-          dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /k:"bbcoders_library-commons-workflow" /o:"bbcoders" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+      # - name: Sonarqube Begin
+      #   run: | 
+      #     dotnet tool install --global dotnet-sonarscanner
+      #     dotnet sonarscanner begin /k:"bbcoders_library-commons-workflow" /o:"bbcoders" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
       
       - name: Build
         run: dotnet build --configuration Release --no-restore
@@ -49,16 +49,16 @@ jobs:
           dotnet ef database update
           dotnet test
 
-      - name: Sonarqube end
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      # - name: Sonarqube end
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   deploy:
-    needs: build
     name: publish
     if: github.event_name == 'push'
+    needs: build
     environment: 'publish'
     runs-on: ubuntu-latest
     steps:
@@ -68,6 +68,7 @@ jobs:
       - name: Publish package
         run: |
           cd ..
+          pwd
           dotnet nuget push nupkg/**/*.nupkg --api-key  ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json  --skip-duplicate
 
     
