@@ -49,11 +49,11 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Apply Migrations
-        run: dotnet ef database update
-
-      - name: Test
-        run: dotnet test --no-restore
+      - name: Apply Migrations And Integration Tests
+        run: |
+          cd BBCoders.Commons.Tools.IntegrationTests
+          dotnet ef database update
+          dotnet test
 
       - name: Sonarqube end
         run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
