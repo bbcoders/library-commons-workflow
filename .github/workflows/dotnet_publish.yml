@@ -58,6 +58,7 @@ jobs:
   deploy:
     needs: build
     name: publish
+    if: github.event_name == 'push'
     environment: 'publish'
     runs-on: ubuntu-latest
     steps:
