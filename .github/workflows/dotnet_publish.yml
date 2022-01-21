@@ -49,6 +49,9 @@ jobs:
           dotnet test
 
       - name: Sonarqube end
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       
