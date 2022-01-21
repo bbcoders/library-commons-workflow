@@ -7,6 +7,18 @@ jobs:
   publish:
     name: build, pack & publish
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+          image: mysql:5.7
+          env:
+              MYSQL_ALLOW_EMPTY_PASSWORD: yes
+              MYSQL_DATABASE: test
+              MYSQL_USER: test
+              MYSQL_PASSWORD: test
+          ports:
+              - 3306
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -20,9 +32,14 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
+          
       
       - name: Install dependencies
         run: dotnet restore
+
+      - name: Install dotnet-ef
+        run: |
+          dotnet tool install --global dotnet-ef
 
       - name: Sonarqube Begin
         run: | 
@@ -31,7 +48,10 @@ jobs:
       
       - name: Build
         run: dotnet build --configuration Release --no-restore
-  
+
+      - name: Apply Migrations
+        run: dotnet ef database update
+
       - name: Test
         run: dotnet test --no-restore
 
