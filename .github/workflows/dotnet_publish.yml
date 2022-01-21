@@ -5,7 +5,7 @@ on:
     - '*'
 jobs:
   build:
-    name:  build, pack & publish
+    name: build, pack & publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
