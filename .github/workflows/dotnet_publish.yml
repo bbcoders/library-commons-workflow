@@ -7,7 +7,6 @@ jobs:
   build:
     name: build, pack & publish
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -53,18 +52,16 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-    deploy:
-      needs: build
-      name: Publish nuget package
-      environment:
-        name: publish
-      runs-on: ubuntu-latest
+  deploy:
+    needs: build
+    name: Publish nuget package
+    environment: 'publish'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create nuget pakcage
+        run: dotnet pack -o ./nupkg
 
-      steps:
-        - name: Create nuget pakcage
-          run: dotnet pack -o ./nupkg
+      - name: Publish package
+        run: dotnet nuget push nupkg/**/*.nupkg --api-key  ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json  --skip-duplicate
 
-        - name: Publish package
-          run: dotnet nuget push nupkg/**/*.nupkg --api-key  ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json  --skip-duplicate
-
-      
+    
