@@ -1,8 +1,11 @@
 name: 'Publish common libraries'
 on:
   push:
-    tags:
-    - '*'
+    branches:
+      - "master"
+  pull_request:
+    branches:
+      - "master"
 jobs:
   build:
     name: build
@@ -55,6 +58,7 @@ jobs:
   deploy:
     needs: build
     name: publish
+    if: github.event_name == 'push'
     environment: 'publish'
     runs-on: ubuntu-latest
     steps:
@@ -62,6 +66,9 @@ jobs:
         run: dotnet pack -o ./nupkg
 
       - name: Publish package
-        run: dotnet nuget push nupkg/**/*.nupkg --api-key  ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json  --skip-duplicate
+        run: |
+          cd ..
+          pwd
+          dotnet nuget push nupkg/**/*.nupkg --api-key  ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json  --skip-duplicate
 
     
