@@ -54,7 +54,7 @@ jobs:
 
   deploy:
     needs: build
-    name: Publish nuget package
+    name: publish
     environment: 'publish'
     runs-on: ubuntu-latest
     steps:
